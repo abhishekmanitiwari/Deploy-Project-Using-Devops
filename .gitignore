@@ -1,0 +1,4 @@
+*.pem
+*.key
+aws-terraform-key
+aws-terraform-key.pub
