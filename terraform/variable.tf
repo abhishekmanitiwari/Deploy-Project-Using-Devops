@@ -1,11 +1,9 @@
-varibale "region"{
-    default = "us-east-1"
+variable "region" {
+  default = "us-east-1"
 }
 
-varibale "public_key"{
+variable "public_key" {}
 
-}
+variable "private_key" {}
 
-varibale "key_name"{
-
-}
+variable "key_name" {}
