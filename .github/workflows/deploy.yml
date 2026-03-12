@@ -51,14 +51,12 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve PLAN
         working-directory: ./terraform
-      - name: Install jq
-        run: sudo apt-get install -y jq
 
       - name: Get EC2 Public IP
         id: get_ip
         working-directory: ./terraform
         run: |
-         IP=$(terraform output -json | jq -r '.instance_public_ip.value')
+         IP=$(terraform output -raw instance_public_ip)
          echo "instance_ip=$IP" >> $GITHUB_OUTPUT
   deploy-app:
     runs-on: ubuntu-latest
@@ -78,7 +76,8 @@ jobs:
          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          aws-region: ap-south-1
       - name: Login to AWS ECR
-        uses: aws-actions/amazon-ecr-login@v1
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
       
       - name: Build and Push Docker Image
         env:
@@ -90,25 +89,20 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./nodeapp
 
-      - name: Deploy Docker image to EC2  
+      - name: Deploy Docker image to EC2
+        uses: appleboy/ssh-action@master
         env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
             REPOSITORY: example-node-app
             IMAGE_TAG: ${{ github.sha }}
             AWS_DEFAULT_REGION: ap-south-1
-        uses: appleboy/ssh-action@master
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           host: ${{ env.SERVER_PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
-          envs: |
-            REGISTRY,REPOSITORY,IMAGE_TAG,AWS_REGION
-            IMAGE_TAG=${{ env.IMAGE_TAG }}
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_PRIVATE_SSH_KEY=${{ env.PRIVATE_SSH_KEY }}
-            AWS_PUBLIC_SSH_KEY=${{ env.PUBLIC_SSH_KEY }}
-            AWS_REGION=${{ env.AWS_REGION }}
+          envs: REGISTRY,REPOSITORY,IMAGE_TAG,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
           script: |
               sudo apt-get update
               sudo apt-get install -y docker.io
