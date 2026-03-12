@@ -105,7 +105,8 @@ jobs:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          host: ${{ env.SERVER_PUBLIC_IP }}
+         # host: ${{ env.SERVER_PUBLIC_IP }}
+          host: ${{ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           envs: REGISTRY,REPOSITORY,IMAGE_TAG,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
