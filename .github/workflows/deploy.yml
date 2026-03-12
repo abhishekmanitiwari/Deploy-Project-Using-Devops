@@ -43,8 +43,8 @@ jobs:
         run: |
           terraform plan \
           -var="region=${AWS_REGION}" \
-          -var="public_key=${secrets.PUBLIC_SSH_KEY}" \
-          -var="private_key=${secrets.PRIVATE_SSH_KEY}" \
+          -var="public_key=${secrets.AWS_SSH_KEY_PUBLIC}" \
+          -var="private_key=${secrets.AWS_SSH_KEY_PRIVATE}" \
           -var="key_name=deployer-key" \
           -out=PLAN
         working-directory: ./terraform
@@ -107,7 +107,7 @@ jobs:
         with:
           host: ${{ env.SERVER_PUBLIC_IP }}
           username: ubuntu
-          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           envs: REGISTRY,REPOSITORY,IMAGE_TAG,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
           script: |
               sudo apt-get update
