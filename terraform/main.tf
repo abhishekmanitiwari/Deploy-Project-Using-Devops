@@ -1,4 +1,4 @@
-resource "aws_key_pair" "deployer-key" {
+resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key = var.public_key
 }
@@ -8,7 +8,7 @@ resource "aws_security_group" "main_group" {
   description = "Allow SSH and HTTP"
 
   ingress {
-    description = "SSH"
+    description = "SSH Access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -16,7 +16,7 @@ resource "aws_security_group" "main_group" {
   }
 
   ingress {
-    description = "HTTP"
+    description = "HTTP Access"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -32,8 +32,11 @@ resource "aws_security_group" "main_group" {
 }
 
 resource "aws_instance" "server" {
-  ami                    = "ami-0c55b159cbfafe1f0"  # Ubuntu 20.04 LTS in ap-south-1
-  instance_type          = "t2.micro"
+
+  # Ubuntu 24.04 LTS ap-south-1 (same as your console screenshot)
+  ami           = "ami-019715e0d74f695be"
+  instance_type = "t3.micro"
+
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.main_group.id]
 

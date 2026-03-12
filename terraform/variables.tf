@@ -1,5 +1,6 @@
 variable "region" {
-  default = "ap-south-1"
+  description = "AWS Region"
+  default     = "ap-south-1"
 }
 
 variable "public_key" {
@@ -14,6 +15,6 @@ variable "private_key" {
 }
 
 variable "key_name" {
-  description = "Key pair name"
+  description = "Key Pair Name"
   type        = string
 }
