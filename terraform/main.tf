@@ -50,6 +50,5 @@ resource "aws_instance" "server" {
     user        = "ubuntu"
     private_key = var.private_key
     timeout     = "4m"
-  
   }
 }
