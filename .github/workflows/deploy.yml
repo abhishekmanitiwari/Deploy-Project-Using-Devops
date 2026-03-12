@@ -39,6 +39,15 @@ jobs:
           -backend-config="region=${AWS_REGION}"
         working-directory: ./terraform
 
+      - name: Terraform Destroy (Recreate Infrastructure)
+        run: |
+          terraform destroy -auto-approve \
+          -var="region=${AWS_REGION}" \
+          -var="public_key=${PUBLIC_SSH_KEY}" \
+          -var="private_key=${PRIVATE_SSH_KEY}" \
+          -var="key_name=deployer-key"
+        working-directory: ./terraform
+
       - name: Terraform Plan
         run: |
           terraform plan \
