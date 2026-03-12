@@ -1,4 +1,4 @@
-resource "aws_key_pair" "deployer" {
+resource "aws_key_pair" "deployer-key" {
   key_name   = var.key_name
   public_key = var.public_key
 }
@@ -32,7 +32,7 @@ resource "aws_security_group" "main_group" {
 }
 
 resource "aws_instance" "server" {
-  ami                    = "ami-019715e0d74f695be"
+  ami                    = "ami-0c55b159cbfafe1f0"  # Ubuntu 20.04 LTS in ap-south-1
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.main_group.id]

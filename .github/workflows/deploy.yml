@@ -25,7 +25,11 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init \
+          -backend-config="bucket=${TF_STATE_BUCKET_NAME}" \
+          -backend-config="key=terraform.tfstate" \
+          -backend-config="region=${AWS_REGION}"
         working-directory: ./terraform
 
       - name: Terraform Plan
